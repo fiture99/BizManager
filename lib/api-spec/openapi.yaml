@@ -1,22 +1,27 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Business Manager API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: items
+  - name: inventory
+  - name: customers
+  - name: suppliers
+  - name: invoices
+  - name: purchase-orders
+  - name: dashboard
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,631 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── ITEMS ──────────────────────────────────────────────────────────────────
+  /items:
+    get:
+      operationId: listItems
+      tags: [items]
+      summary: List all items
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+    post:
+      operationId: createItem
+      tags: [items]
+      summary: Create item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+
+  /items/{id}:
+    get:
+      operationId: getItem
+      tags: [items]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+    patch:
+      operationId: updateItem
+      tags: [items]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+    delete:
+      operationId: deleteItem
+      tags: [items]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── INVENTORY ──────────────────────────────────────────────────────────────
+  /inventory:
+    get:
+      operationId: listInventory
+      tags: [inventory]
+      summary: List inventory levels for all items
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryLevel"
+
+  /inventory/{itemId}:
+    get:
+      operationId: getInventoryLevel
+      tags: [inventory]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryLevel"
+    patch:
+      operationId: updateInventoryLevel
+      tags: [inventory]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryLevelUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryLevel"
+
+  /inventory/{itemId}/adjust:
+    post:
+      operationId: adjustStock
+      tags: [inventory]
+      summary: Record a stock adjustment
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StockAdjustmentInput"
+      responses:
+        "201":
+          description: Adjustment recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockAdjustment"
+
+  /inventory/{itemId}/adjustments:
+    get:
+      operationId: listStockAdjustments
+      tags: [inventory]
+      summary: Adjustment history for an item
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StockAdjustment"
+
+  /inventory/low-stock:
+    get:
+      operationId: listLowStock
+      tags: [inventory]
+      summary: Items at or below reorder point
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryLevel"
+
+  # ── CUSTOMERS ──────────────────────────────────────────────────────────────
+  /customers:
+    get:
+      operationId: listCustomers
+      tags: [customers]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Customer"
+    post:
+      operationId: createCustomer
+      tags: [customers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    patch:
+      operationId: updateCustomer
+      tags: [customers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    delete:
+      operationId: deleteCustomer
+      tags: [customers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── SUPPLIERS ──────────────────────────────────────────────────────────────
+  /suppliers:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Supplier"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /suppliers/{id}:
+    get:
+      operationId: getSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    patch:
+      operationId: updateSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    delete:
+      operationId: deleteSupplier
+      tags: [suppliers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── INVOICES ───────────────────────────────────────────────────────────────
+  /invoices:
+    get:
+      operationId: listInvoices
+      tags: [invoices]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invoice"
+    post:
+      operationId: createInvoice
+      tags: [invoices]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+
+  /invoices/{id}:
+    get:
+      operationId: getInvoice
+      tags: [invoices]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+    patch:
+      operationId: updateInvoice
+      tags: [invoices]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+    delete:
+      operationId: deleteInvoice
+      tags: [invoices]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /invoices/{id}/status:
+    patch:
+      operationId: updateInvoiceStatus
+      tags: [invoices]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceStatusUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+
+  # ── PURCHASE ORDERS ────────────────────────────────────────────────────────
+  /purchase-orders:
+    get:
+      operationId: listPurchaseOrders
+      tags: [purchase-orders]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PurchaseOrder"
+    post:
+      operationId: createPurchaseOrder
+      tags: [purchase-orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurchaseOrderInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseOrder"
+
+  /purchase-orders/{id}:
+    get:
+      operationId: getPurchaseOrder
+      tags: [purchase-orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseOrder"
+    patch:
+      operationId: updatePurchaseOrder
+      tags: [purchase-orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurchaseOrderUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseOrder"
+    delete:
+      operationId: deletePurchaseOrder
+      tags: [purchase-orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /purchase-orders/{id}/status:
+    patch:
+      operationId: updatePurchaseOrderStatus
+      tags: [purchase-orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurchaseOrderStatusUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseOrder"
+
+  # ── DASHBOARD ──────────────────────────────────────────────────────────────
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Key business metrics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent transactions and events
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/invoice-stats:
+    get:
+      operationId: getInvoiceStats
+      tags: [dashboard]
+      summary: Invoice breakdown by status
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceStats"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +661,351 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    # ── ITEM ──────────────────────────────────────────────────────────────────
+    Item:
+      type: object
+      required: [id, name, category, unitPrice, costPrice, unitOfMeasure, createdAt]
+      properties:
+        id:            { type: integer }
+        name:          { type: string }
+        description:   { type: ["string", "null"] }
+        category:      { type: string }
+        unitPrice:     { type: number }
+        costPrice:     { type: number }
+        unitOfMeasure: { type: string }
+        createdAt:     { type: string }
+        updatedAt:     { type: string }
+
+    ItemInput:
+      type: object
+      required: [name, category, unitPrice, costPrice, unitOfMeasure]
+      properties:
+        name:          { type: string }
+        description:   { type: string }
+        category:      { type: string }
+        unitPrice:     { type: number }
+        costPrice:     { type: number }
+        unitOfMeasure: { type: string }
+
+    ItemUpdate:
+      type: object
+      properties:
+        name:          { type: string }
+        description:   { type: string }
+        category:      { type: string }
+        unitPrice:     { type: number }
+        costPrice:     { type: number }
+        unitOfMeasure: { type: string }
+
+    # ── INVENTORY ─────────────────────────────────────────────────────────────
+    InventoryLevel:
+      type: object
+      required: [itemId, quantityOnHand, reorderPoint, updatedAt]
+      properties:
+        itemId:          { type: integer }
+        quantityOnHand:  { type: number }
+        reorderPoint:    { type: number }
+        updatedAt:       { type: string }
+        item:
+          $ref: "#/components/schemas/Item"
+
+    InventoryLevelUpdate:
+      type: object
+      properties:
+        quantityOnHand: { type: number }
+        reorderPoint:   { type: number }
+
+    StockAdjustment:
+      type: object
+      required: [id, itemId, quantity, reason, createdAt]
+      properties:
+        id:        { type: integer }
+        itemId:    { type: integer }
+        quantity:  { type: number }
+        reason:    { type: string }
+        notes:     { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    StockAdjustmentInput:
+      type: object
+      required: [quantity, reason]
+      properties:
+        quantity: { type: number }
+        reason:   { type: string }
+        notes:    { type: string }
+
+    # ── CUSTOMER ─────────────────────────────────────────────────────────────
+    Customer:
+      type: object
+      required: [id, name, createdAt]
+      properties:
+        id:        { type: integer }
+        name:      { type: string }
+        email:     { type: ["string", "null"] }
+        phone:     { type: ["string", "null"] }
+        address:   { type: ["string", "null"] }
+        city:      { type: ["string", "null"] }
+        country:   { type: ["string", "null"] }
+        notes:     { type: ["string", "null"] }
+        createdAt: { type: string }
+
+    CustomerInput:
+      type: object
+      required: [name]
+      properties:
+        name:    { type: string }
+        email:   { type: string }
+        phone:   { type: string }
+        address: { type: string }
+        city:    { type: string }
+        country: { type: string }
+        notes:   { type: string }
+
+    CustomerUpdate:
+      type: object
+      properties:
+        name:    { type: string }
+        email:   { type: string }
+        phone:   { type: string }
+        address: { type: string }
+        city:    { type: string }
+        country: { type: string }
+        notes:   { type: string }
+
+    # ── SUPPLIER ─────────────────────────────────────────────────────────────
+    Supplier:
+      type: object
+      required: [id, name, createdAt]
+      properties:
+        id:           { type: integer }
+        name:         { type: string }
+        email:        { type: ["string", "null"] }
+        phone:        { type: ["string", "null"] }
+        address:      { type: ["string", "null"] }
+        city:         { type: ["string", "null"] }
+        country:      { type: ["string", "null"] }
+        contactPerson: { type: ["string", "null"] }
+        notes:        { type: ["string", "null"] }
+        createdAt:    { type: string }
+
+    SupplierInput:
+      type: object
+      required: [name]
+      properties:
+        name:          { type: string }
+        email:         { type: string }
+        phone:         { type: string }
+        address:       { type: string }
+        city:          { type: string }
+        country:       { type: string }
+        contactPerson: { type: string }
+        notes:         { type: string }
+
+    SupplierUpdate:
+      type: object
+      properties:
+        name:          { type: string }
+        email:         { type: string }
+        phone:         { type: string }
+        address:       { type: string }
+        city:          { type: string }
+        country:       { type: string }
+        contactPerson: { type: string }
+        notes:         { type: string }
+
+    # ── INVOICE ──────────────────────────────────────────────────────────────
+    InvoiceLineItem:
+      type: object
+      required: [id, invoiceId, itemId, description, quantity, unitPrice, lineTotal]
+      properties:
+        id:          { type: integer }
+        invoiceId:   { type: integer }
+        itemId:      { type: ["integer", "null"] }
+        description: { type: string }
+        quantity:    { type: number }
+        unitPrice:   { type: number }
+        lineTotal:   { type: number }
+        item:
+          $ref: "#/components/schemas/Item"
+
+    Invoice:
+      type: object
+      required: [id, invoiceNumber, customerId, status, subtotal, taxRate, taxAmount, total, createdAt]
+      properties:
+        id:            { type: integer }
+        invoiceNumber: { type: string }
+        customerId:    { type: integer }
+        status:        { type: string, enum: [Draft, Sent, Paid, Overdue] }
+        issueDate:     { type: ["string", "null"] }
+        dueDate:       { type: ["string", "null"] }
+        subtotal:      { type: number }
+        taxRate:       { type: number }
+        taxAmount:     { type: number }
+        total:         { type: number }
+        notes:         { type: ["string", "null"] }
+        createdAt:     { type: string }
+        customer:
+          $ref: "#/components/schemas/Customer"
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceLineItem"
+
+    InvoiceLineItemInput:
+      type: object
+      required: [description, quantity, unitPrice]
+      properties:
+        itemId:      { type: integer }
+        description: { type: string }
+        quantity:    { type: number }
+        unitPrice:   { type: number }
+
+    InvoiceInput:
+      type: object
+      required: [customerId, lineItems]
+      properties:
+        customerId: { type: integer }
+        issueDate:  { type: string }
+        dueDate:    { type: string }
+        taxRate:    { type: number }
+        notes:      { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceLineItemInput"
+
+    InvoiceUpdate:
+      type: object
+      properties:
+        customerId: { type: integer }
+        issueDate:  { type: string }
+        dueDate:    { type: string }
+        taxRate:    { type: number }
+        notes:      { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceLineItemInput"
+
+    InvoiceStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [Draft, Sent, Paid, Overdue] }
+
+    # ── PURCHASE ORDER ────────────────────────────────────────────────────────
+    PurchaseOrderLineItem:
+      type: object
+      required: [id, purchaseOrderId, itemId, description, quantity, unitCost, lineTotal]
+      properties:
+        id:              { type: integer }
+        purchaseOrderId: { type: integer }
+        itemId:          { type: ["integer", "null"] }
+        description:     { type: string }
+        quantity:        { type: number }
+        unitCost:        { type: number }
+        lineTotal:       { type: number }
+        item:
+          $ref: "#/components/schemas/Item"
+
+    PurchaseOrder:
+      type: object
+      required: [id, poNumber, supplierId, status, subtotal, total, createdAt]
+      properties:
+        id:         { type: integer }
+        poNumber:   { type: string }
+        supplierId: { type: integer }
+        status:     { type: string, enum: [Draft, Sent, Received, Cancelled] }
+        orderDate:  { type: ["string", "null"] }
+        expectedDate: { type: ["string", "null"] }
+        subtotal:   { type: number }
+        total:      { type: number }
+        notes:      { type: ["string", "null"] }
+        createdAt:  { type: string }
+        supplier:
+          $ref: "#/components/schemas/Supplier"
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseOrderLineItem"
+
+    PurchaseOrderLineItemInput:
+      type: object
+      required: [description, quantity, unitCost]
+      properties:
+        itemId:      { type: integer }
+        description: { type: string }
+        quantity:    { type: number }
+        unitCost:    { type: number }
+
+    PurchaseOrderInput:
+      type: object
+      required: [supplierId, lineItems]
+      properties:
+        supplierId:   { type: integer }
+        orderDate:    { type: string }
+        expectedDate: { type: string }
+        notes:        { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseOrderLineItemInput"
+
+    PurchaseOrderUpdate:
+      type: object
+      properties:
+        supplierId:   { type: integer }
+        orderDate:    { type: string }
+        expectedDate: { type: string }
+        notes:        { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseOrderLineItemInput"
+
+    PurchaseOrderStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [Draft, Sent, Received, Cancelled] }
+
+    # ── DASHBOARD ─────────────────────────────────────────────────────────────
+    DashboardSummary:
+      type: object
+      required: [totalInventoryValue, outstandingInvoicesTotal, outstandingInvoicesCount, lowStockCount, totalCustomers, totalSuppliers, totalItems]
+      properties:
+        totalInventoryValue:       { type: number }
+        outstandingInvoicesTotal:  { type: number }
+        outstandingInvoicesCount:  { type: integer }
+        lowStockCount:             { type: integer }
+        totalCustomers:            { type: integer }
+        totalSuppliers:            { type: integer }
+        totalItems:                { type: integer }
+        paidInvoicesThisMonth:     { type: number }
+        pendingPurchaseOrders:     { type: integer }
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, createdAt]
+      properties:
+        id:          { type: string }
+        type:        { type: string, enum: [invoice, purchase_order, stock_adjustment, customer, supplier] }
+        description: { type: string }
+        amount:      { type: ["number", "null"] }
+        status:      { type: ["string", "null"] }
+        createdAt:   { type: string }
+
+    InvoiceStats:
+      type: object
+      required: [draft, sent, paid, overdue]
+      properties:
+        draft:   { type: integer }
+        sent:    { type: integer }
+        paid:    { type: integer }
+        overdue: { type: integer }
+        totalDraft:   { type: number }
+        totalSent:    { type: number }
+        totalPaid:    { type: number }
+        totalOverdue: { type: number }
