@@ -349,7 +349,7 @@ export default function Invoices() {
 
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <FormLabel className="text-base font-semibold">Line Items</FormLabel>
+                  <span className="text-base font-semibold">Line Items</span>
                   <Button type="button" variant="outline" size="sm" onClick={() => append({ description: "", quantity: 1, unitPrice: 0 })} className="gap-1">
                     <Plus className="w-3.5 h-3.5" /> Add Line
                   </Button>
