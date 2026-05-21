@@ -7,11 +7,13 @@ import {
   FileText, 
   ShoppingCart, 
   Users, 
-  Truck
+  Truck,
+  Store
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Point of Sale", href: "/pos", icon: Store },
   { name: "Items", href: "/items", icon: Package },
   { name: "Inventory", href: "/inventory", icon: Boxes },
   { name: "Invoices", href: "/invoices", icon: FileText },

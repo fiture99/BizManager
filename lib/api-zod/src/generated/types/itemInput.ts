@@ -13,4 +13,6 @@ export interface ItemInput {
   unitPrice: number;
   costPrice: number;
   unitOfMeasure: string;
+  barcode?: string;
+  expiryDate?: string;
 }

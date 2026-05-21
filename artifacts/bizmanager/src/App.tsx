@@ -7,6 +7,7 @@ import Layout from "@/components/layout";
 
 // Pages
 import Dashboard from "@/pages/dashboard";
+import POS from "@/pages/pos";
 import Items from "@/pages/items";
 import Inventory from "@/pages/inventory";
 import Invoices from "@/pages/invoices";
@@ -21,6 +22,7 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Dashboard} />
+        <Route path="/pos" component={POS} />
         <Route path="/items" component={Items} />
         <Route path="/inventory" component={Inventory} />
         <Route path="/invoices" component={Invoices} />

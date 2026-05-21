@@ -15,6 +15,7 @@ tags:
   - name: invoices
   - name: purchase-orders
   - name: dashboard
+  - name: pos
 
 paths:
   /healthz:
@@ -62,6 +63,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+
+  /items/barcode/{barcode}:
+    get:
+      operationId: getItemByBarcode
+      tags: [items]
+      summary: Look up item by barcode
+      parameters:
+        - name: barcode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: Not found
 
   /items/{id}:
     get:
@@ -612,6 +634,57 @@ paths:
               schema:
                 $ref: "#/components/schemas/PurchaseOrder"
 
+  # ── POS ───────────────────────────────────────────────────────────────────
+  /pos/sales:
+    get:
+      operationId: listSales
+      tags: [pos]
+      summary: List all POS sales
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sale"
+    post:
+      operationId: createSale
+      tags: [pos]
+      summary: Complete a POS sale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaleInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+
+  /pos/sales/{id}:
+    get:
+      operationId: getSale
+      tags: [pos]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+
   # ── DASHBOARD ──────────────────────────────────────────────────────────────
   /dashboard/summary:
     get:
@@ -675,6 +748,8 @@ components:
         unitPrice:     { type: number }
         costPrice:     { type: number }
         unitOfMeasure: { type: string }
+        barcode:       { type: ["string", "null"] }
+        expiryDate:    { type: ["string", "null"] }
         createdAt:     { type: string }
         updatedAt:     { type: string }
 
@@ -688,6 +763,8 @@ components:
         unitPrice:     { type: number }
         costPrice:     { type: number }
         unitOfMeasure: { type: string }
+        barcode:       { type: string }
+        expiryDate:    { type: string }
 
     ItemUpdate:
       type: object
@@ -698,6 +775,8 @@ components:
         unitPrice:     { type: number }
         costPrice:     { type: number }
         unitOfMeasure: { type: string }
+        barcode:       { type: string }
+        expiryDate:    { type: string }
 
     # ── INVENTORY ─────────────────────────────────────────────────────────────
     InventoryLevel:
@@ -970,6 +1049,63 @@ components:
       required: [status]
       properties:
         status: { type: string, enum: [Draft, Sent, Received, Cancelled] }
+
+    # ── SALE ──────────────────────────────────────────────────────────────────
+    SaleLineItem:
+      type: object
+      required: [id, saleId, description, quantity, unitPrice, lineTotal]
+      properties:
+        id:          { type: integer }
+        saleId:      { type: integer }
+        itemId:      { type: ["integer", "null"] }
+        description: { type: string }
+        quantity:    { type: number }
+        unitPrice:   { type: number }
+        lineTotal:   { type: number }
+        item:
+          $ref: "#/components/schemas/Item"
+
+    Sale:
+      type: object
+      required: [id, saleNumber, paymentMethod, subtotal, taxRate, taxAmount, total, createdAt]
+      properties:
+        id:             { type: integer }
+        saleNumber:     { type: string }
+        paymentMethod:  { type: string }
+        subtotal:       { type: number }
+        taxRate:        { type: number }
+        taxAmount:      { type: number }
+        total:          { type: number }
+        amountTendered: { type: ["number", "null"] }
+        change:         { type: ["number", "null"] }
+        notes:          { type: ["string", "null"] }
+        createdAt:      { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/SaleLineItem"
+
+    SaleLineItemInput:
+      type: object
+      required: [description, quantity, unitPrice]
+      properties:
+        itemId:      { type: integer }
+        description: { type: string }
+        quantity:    { type: number }
+        unitPrice:   { type: number }
+
+    SaleInput:
+      type: object
+      required: [paymentMethod, lineItems]
+      properties:
+        paymentMethod:  { type: string }
+        taxRate:        { type: number }
+        amountTendered: { type: number }
+        notes:          { type: string }
+        lineItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/SaleLineItemInput"
 
     # ── DASHBOARD ─────────────────────────────────────────────────────────────
     DashboardSummary:

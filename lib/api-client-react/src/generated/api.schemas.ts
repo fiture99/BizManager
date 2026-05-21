@@ -18,6 +18,10 @@ export interface Item {
   unitPrice: number;
   costPrice: number;
   unitOfMeasure: string;
+  /** @nullable */
+  barcode?: string | null;
+  /** @nullable */
+  expiryDate?: string | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -29,6 +33,8 @@ export interface ItemInput {
   unitPrice: number;
   costPrice: number;
   unitOfMeasure: string;
+  barcode?: string;
+  expiryDate?: string;
 }
 
 export interface ItemUpdate {
@@ -38,6 +44,8 @@ export interface ItemUpdate {
   unitPrice?: number;
   costPrice?: number;
   unitOfMeasure?: string;
+  barcode?: string;
+  expiryDate?: string;
 }
 
 export interface InventoryLevel {
@@ -305,6 +313,51 @@ export const PurchaseOrderStatusUpdateStatus = {
 
 export interface PurchaseOrderStatusUpdate {
   status: PurchaseOrderStatusUpdateStatus;
+}
+
+export interface SaleLineItem {
+  id: number;
+  saleId: number;
+  /** @nullable */
+  itemId?: number | null;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  item?: Item;
+}
+
+export interface Sale {
+  id: number;
+  saleNumber: string;
+  paymentMethod: string;
+  subtotal: number;
+  taxRate: number;
+  taxAmount: number;
+  total: number;
+  /** @nullable */
+  amountTendered?: number | null;
+  /** @nullable */
+  change?: number | null;
+  /** @nullable */
+  notes?: string | null;
+  createdAt: string;
+  lineItems?: SaleLineItem[];
+}
+
+export interface SaleLineItemInput {
+  itemId?: number;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface SaleInput {
+  paymentMethod: string;
+  taxRate?: number;
+  amountTendered?: number;
+  notes?: string;
+  lineItems: SaleLineItemInput[];
 }
 
 export interface DashboardSummary {

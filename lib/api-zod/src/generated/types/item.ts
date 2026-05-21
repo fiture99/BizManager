@@ -15,6 +15,10 @@ export interface Item {
   unitPrice: number;
   costPrice: number;
   unitOfMeasure: string;
+  /** @nullable */
+  barcode?: string | null;
+  /** @nullable */
+  expiryDate?: string | null;
   createdAt: string;
   updatedAt?: string;
 }

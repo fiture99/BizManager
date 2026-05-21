@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Search, AlertTriangle, TrendingUp, TrendingDown, History, Settings2, Boxes } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { BarcodeInput } from "@/components/barcode-input";
 
 const adjustSchema = z.object({
   quantity: z.coerce.number().refine((v) => v !== 0, "Quantity cannot be zero"),
@@ -76,8 +77,20 @@ export default function Inventory() {
 
   const filtered = (inventory ?? []).filter((inv) => {
     const q = search.toLowerCase();
-    return inv.item?.name.toLowerCase().includes(q) || inv.item?.category.toLowerCase().includes(q);
+    return inv.item?.name.toLowerCase().includes(q) || inv.item?.category.toLowerCase().includes(q) ||
+      (inv.item?.barcode && inv.item.barcode.toLowerCase().includes(q));
   });
+
+  const handleBarcodeScan = (barcode: string) => {
+    const found = (inventory ?? []).find(inv => inv.item?.barcode === barcode);
+    if (found && found.item) {
+      setAdjustItem({ id: found.itemId, name: found.item.name });
+      adjustForm.reset({ quantity: 0, reason: "", notes: "" });
+      toast({ title: `Found: ${found.item.name} — opening stock adjust` });
+    } else {
+      toast({ title: "Barcode not found", description: barcode, variant: "destructive" });
+    }
+  };
 
   const handleAdjust = (values: AdjustFormValues) => {
     if (!adjustItem) return;
@@ -126,6 +139,11 @@ export default function Inventory() {
           </Badge>
         )}
       </div>
+
+      <BarcodeInput
+        onScan={handleBarcodeScan}
+        placeholder="Scan barcode to check & adjust stock..."
+      />
 
       {showLowStock && lowStock && lowStock.length > 0 && (
         <Card className="border-destructive/50 bg-destructive/5">

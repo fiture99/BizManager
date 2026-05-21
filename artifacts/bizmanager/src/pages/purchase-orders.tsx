@@ -32,6 +32,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, MoreHorizontal, Pencil, Eye, ShoppingCart, X, CheckCircle2 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { BarcodeInput } from "@/components/barcode-input";
 
 const lineItemSchema = z.object({
   itemId: z.coerce.number().optional(),
@@ -104,6 +105,20 @@ export default function PurchaseOrders() {
     queryClient.invalidateQueries({ queryKey: getListPurchaseOrdersQueryKey() });
     queryClient.invalidateQueries({ queryKey: getListInventoryQueryKey() });
     queryClient.invalidateQueries({ queryKey: getListLowStockQueryKey() });
+  };
+
+  const handleBarcodeScan = (barcode: string) => {
+    const found = (items ?? []).find(i => i.barcode === barcode);
+    if (found) {
+      if (formOpen) {
+        append({ itemId: found.id, description: found.name, quantity: 1, unitCost: found.costPrice });
+        toast({ title: `Added: ${found.name}` });
+      } else {
+        toast({ title: `Scanned: ${found.name}`, description: `Open a PO form to add items by barcode.` });
+      }
+    } else {
+      toast({ title: "Barcode not found", description: barcode, variant: "destructive" });
+    }
   };
 
   const filtered = (orders ?? []).filter((po) => {
@@ -213,6 +228,11 @@ export default function PurchaseOrders() {
           <Plus className="w-4 h-4" /> New Purchase Order
         </Button>
       </div>
+
+      <BarcodeInput
+        onScan={handleBarcodeScan}
+        placeholder={formOpen ? "Scan barcode to add item to current order..." : "Scan barcode to look up an item..."}
+      />
 
       <Card>
         <CardHeader className="pb-3">

@@ -7,6 +7,7 @@ import suppliersRouter from "./suppliers";
 import invoicesRouter from "./invoices";
 import purchaseOrdersRouter from "./purchase-orders";
 import dashboardRouter from "./dashboard";
+import posRouter from "./pos";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(suppliersRouter);
 router.use(invoicesRouter);
 router.use(purchaseOrdersRouter);
 router.use(dashboardRouter);
+router.use(posRouter);
 
 export default router;

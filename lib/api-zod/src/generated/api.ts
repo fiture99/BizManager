@@ -27,6 +27,8 @@ export const ListItemsResponseItem = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 })
@@ -42,7 +44,31 @@ export const CreateItemBody = zod.object({
   "category": zod.string(),
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
-  "unitOfMeasure": zod.string()
+  "unitOfMeasure": zod.string(),
+  "barcode": zod.string().optional(),
+  "expiryDate": zod.string().optional()
+})
+
+
+/**
+ * @summary Look up item by barcode
+ */
+export const GetItemByBarcodeParams = zod.object({
+  "barcode": zod.coerce.string()
+})
+
+export const GetItemByBarcodeResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "category": zod.string(),
+  "unitPrice": zod.number(),
+  "costPrice": zod.number(),
+  "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string().optional()
 })
 
 
@@ -58,6 +84,8 @@ export const GetItemResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 })
@@ -73,7 +101,9 @@ export const UpdateItemBody = zod.object({
   "category": zod.string().optional(),
   "unitPrice": zod.number().optional(),
   "costPrice": zod.number().optional(),
-  "unitOfMeasure": zod.string().optional()
+  "unitOfMeasure": zod.string().optional(),
+  "barcode": zod.string().optional(),
+  "expiryDate": zod.string().optional()
 })
 
 export const UpdateItemResponse = zod.object({
@@ -84,6 +114,8 @@ export const UpdateItemResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 })
@@ -110,6 +142,8 @@ export const ListInventoryResponseItem = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -134,6 +168,8 @@ export const GetInventoryLevelResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -162,6 +198,8 @@ export const UpdateInventoryLevelResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -216,6 +254,8 @@ export const ListLowStockResponseItem = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -416,6 +456,8 @@ export const ListInvoicesResponseItem = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -483,6 +525,8 @@ export const GetInvoiceResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -548,6 +592,8 @@ export const UpdateInvoiceResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -608,6 +654,8 @@ export const UpdateInvoiceStatusResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -654,6 +702,8 @@ export const ListPurchaseOrdersResponseItem = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -719,6 +769,8 @@ export const GetPurchaseOrderResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -782,6 +834,8 @@ export const UpdatePurchaseOrderResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()
@@ -841,6 +895,107 @@ export const UpdatePurchaseOrderStatusResponse = zod.object({
   "unitPrice": zod.number(),
   "costPrice": zod.number(),
   "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string().optional()
+}).optional()
+})).optional()
+})
+
+
+/**
+ * @summary List all POS sales
+ */
+export const ListSalesResponseItem = zod.object({
+  "id": zod.number(),
+  "saleNumber": zod.string(),
+  "paymentMethod": zod.string(),
+  "subtotal": zod.number(),
+  "taxRate": zod.number(),
+  "taxAmount": zod.number(),
+  "total": zod.number(),
+  "amountTendered": zod.number().nullish(),
+  "change": zod.number().nullish(),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "lineItems": zod.array(zod.object({
+  "id": zod.number(),
+  "saleId": zod.number(),
+  "itemId": zod.number().nullish(),
+  "description": zod.string(),
+  "quantity": zod.number(),
+  "unitPrice": zod.number(),
+  "lineTotal": zod.number(),
+  "item": zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "category": zod.string(),
+  "unitPrice": zod.number(),
+  "costPrice": zod.number(),
+  "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string().optional()
+}).optional()
+})).optional()
+})
+export const ListSalesResponse = zod.array(ListSalesResponseItem)
+
+
+/**
+ * @summary Complete a POS sale
+ */
+export const CreateSaleBody = zod.object({
+  "paymentMethod": zod.string(),
+  "taxRate": zod.number().optional(),
+  "amountTendered": zod.number().optional(),
+  "notes": zod.string().optional(),
+  "lineItems": zod.array(zod.object({
+  "itemId": zod.number().optional(),
+  "description": zod.string(),
+  "quantity": zod.number(),
+  "unitPrice": zod.number()
+}))
+})
+
+
+export const GetSaleParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetSaleResponse = zod.object({
+  "id": zod.number(),
+  "saleNumber": zod.string(),
+  "paymentMethod": zod.string(),
+  "subtotal": zod.number(),
+  "taxRate": zod.number(),
+  "taxAmount": zod.number(),
+  "total": zod.number(),
+  "amountTendered": zod.number().nullish(),
+  "change": zod.number().nullish(),
+  "notes": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "lineItems": zod.array(zod.object({
+  "id": zod.number(),
+  "saleId": zod.number(),
+  "itemId": zod.number().nullish(),
+  "description": zod.string(),
+  "quantity": zod.number(),
+  "unitPrice": zod.number(),
+  "lineTotal": zod.number(),
+  "item": zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "description": zod.string().nullish(),
+  "category": zod.string(),
+  "unitPrice": zod.number(),
+  "costPrice": zod.number(),
+  "unitOfMeasure": zod.string(),
+  "barcode": zod.string().nullish(),
+  "expiryDate": zod.string().nullish(),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
 }).optional()

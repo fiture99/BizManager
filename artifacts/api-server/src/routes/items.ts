@@ -14,15 +14,30 @@ import {
 
 const router: IRouter = Router();
 
-router.get("/items", async (req, res): Promise<void> => {
-  const items = await db.select().from(itemsTable).orderBy(itemsTable.name);
-  res.json(ListItemsResponse.parse(items.map(i => ({
+function serializeItem(i: typeof itemsTable.$inferSelect) {
+  return {
     ...i,
     unitPrice: Number(i.unitPrice),
     costPrice: Number(i.costPrice),
     createdAt: i.createdAt.toISOString(),
     updatedAt: i.updatedAt.toISOString(),
-  }))));
+  };
+}
+
+router.get("/items", async (req, res): Promise<void> => {
+  const items = await db.select().from(itemsTable).orderBy(itemsTable.name);
+  res.json(ListItemsResponse.parse(items.map(serializeItem)));
+});
+
+// Barcode lookup — must be before /items/:id to avoid conflict
+router.get("/items/barcode/:barcode", async (req, res): Promise<void> => {
+  const barcode = req.params.barcode;
+  const [item] = await db.select().from(itemsTable).where(eq(itemsTable.barcode, barcode));
+  if (!item) {
+    res.status(404).json({ error: "Item not found" });
+    return;
+  }
+  res.json(GetItemResponse.parse(serializeItem(item)));
 });
 
 router.post("/items", async (req, res): Promise<void> => {
@@ -39,6 +54,8 @@ router.post("/items", async (req, res): Promise<void> => {
     unitPrice: String(parsed.data.unitPrice),
     costPrice: String(parsed.data.costPrice),
     unitOfMeasure: parsed.data.unitOfMeasure,
+    barcode: parsed.data.barcode ?? null,
+    expiryDate: parsed.data.expiryDate ?? null,
   }).returning();
 
   // Auto-create inventory level at 0
@@ -48,13 +65,7 @@ router.post("/items", async (req, res): Promise<void> => {
     reorderPoint: "0",
   }).onConflictDoNothing();
 
-  res.status(201).json(GetItemResponse.parse({
-    ...item,
-    unitPrice: Number(item.unitPrice),
-    costPrice: Number(item.costPrice),
-    createdAt: item.createdAt.toISOString(),
-    updatedAt: item.updatedAt.toISOString(),
-  }));
+  res.status(201).json(GetItemResponse.parse(serializeItem(item)));
 });
 
 router.get("/items/:id", async (req, res): Promise<void> => {
@@ -70,13 +81,7 @@ router.get("/items/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  res.json(GetItemResponse.parse({
-    ...item,
-    unitPrice: Number(item.unitPrice),
-    costPrice: Number(item.costPrice),
-    createdAt: item.createdAt.toISOString(),
-    updatedAt: item.updatedAt.toISOString(),
-  }));
+  res.json(GetItemResponse.parse(serializeItem(item)));
 });
 
 router.patch("/items/:id", async (req, res): Promise<void> => {
@@ -99,6 +104,8 @@ router.patch("/items/:id", async (req, res): Promise<void> => {
   if (parsed.data.unitPrice !== undefined) updateData.unitPrice = String(parsed.data.unitPrice);
   if (parsed.data.costPrice !== undefined) updateData.costPrice = String(parsed.data.costPrice);
   if (parsed.data.unitOfMeasure !== undefined) updateData.unitOfMeasure = parsed.data.unitOfMeasure;
+  if (parsed.data.barcode !== undefined) updateData.barcode = parsed.data.barcode;
+  if (parsed.data.expiryDate !== undefined) updateData.expiryDate = parsed.data.expiryDate;
 
   const [item] = await db.update(itemsTable).set(updateData).where(eq(itemsTable.id, params.data.id)).returning();
   if (!item) {
@@ -106,13 +113,7 @@ router.patch("/items/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  res.json(UpdateItemResponse.parse({
-    ...item,
-    unitPrice: Number(item.unitPrice),
-    costPrice: Number(item.costPrice),
-    createdAt: item.createdAt.toISOString(),
-    updatedAt: item.updatedAt.toISOString(),
-  }));
+  res.json(UpdateItemResponse.parse(serializeItem(item)));
 });
 
 router.delete("/items/:id", async (req, res): Promise<void> => {
