@@ -16,6 +16,7 @@ tags:
   - name: purchase-orders
   - name: dashboard
   - name: pos
+  - name: reports
 
 paths:
   /healthz:
@@ -685,6 +686,37 @@ paths:
               schema:
                 $ref: "#/components/schemas/Sale"
 
+  # ── REPORTS ────────────────────────────────────────────────────────────────
+  /reports/sales:
+    get:
+      operationId: getSalesReport
+      tags: [reports]
+      summary: Get sales report for a period
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [today, week, month, custom]
+          description: Preset period or 'custom'
+        - name: from
+          in: query
+          schema:
+            type: string
+          description: Start date (ISO) for custom range
+        - name: to
+          in: query
+          schema:
+            type: string
+          description: End date (ISO) for custom range
+      responses:
+        "200":
+          description: Sales report data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SalesReport"
+
   # ── DASHBOARD ──────────────────────────────────────────────────────────────
   /dashboard/summary:
     get:
@@ -1106,6 +1138,60 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/SaleLineItemInput"
+
+    # ── REPORTS ───────────────────────────────────────────────────────────────
+    ReportSummary:
+      type: object
+      required: [totalRevenue, totalTransactions, avgOrderValue, totalTax]
+      properties:
+        totalRevenue:      { type: number }
+        totalTransactions: { type: integer }
+        avgOrderValue:     { type: number }
+        totalTax:          { type: number }
+
+    DailyRevenuePoint:
+      type: object
+      required: [date, revenue, transactions]
+      properties:
+        date:         { type: string }
+        revenue:      { type: number }
+        transactions: { type: integer }
+
+    TopItem:
+      type: object
+      required: [itemId, name, quantitySold, revenue]
+      properties:
+        itemId:       { type: integer }
+        name:         { type: string }
+        quantitySold: { type: number }
+        revenue:      { type: number }
+
+    PaymentBreakdownItem:
+      type: object
+      required: [method, count, total]
+      properties:
+        method: { type: string }
+        count:  { type: integer }
+        total:  { type: number }
+
+    SalesReport:
+      type: object
+      required: [summary, dailyRevenue, topItems, paymentBreakdown]
+      properties:
+        summary:
+          $ref: "#/components/schemas/ReportSummary"
+        dailyRevenue:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyRevenuePoint"
+        topItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopItem"
+        paymentBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentBreakdownItem"
 
     # ── DASHBOARD ─────────────────────────────────────────────────────────────
     DashboardSummary:

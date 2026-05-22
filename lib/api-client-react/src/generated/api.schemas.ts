@@ -360,6 +360,39 @@ export interface SaleInput {
   lineItems: SaleLineItemInput[];
 }
 
+export interface ReportSummary {
+  totalRevenue: number;
+  totalTransactions: number;
+  avgOrderValue: number;
+  totalTax: number;
+}
+
+export interface DailyRevenuePoint {
+  date: string;
+  revenue: number;
+  transactions: number;
+}
+
+export interface TopItem {
+  itemId: number;
+  name: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+export interface PaymentBreakdownItem {
+  method: string;
+  count: number;
+  total: number;
+}
+
+export interface SalesReport {
+  summary: ReportSummary;
+  dailyRevenue: DailyRevenuePoint[];
+  topItems: TopItem[];
+  paymentBreakdown: PaymentBreakdownItem[];
+}
+
 export interface DashboardSummary {
   totalInventoryValue: number;
   outstandingInvoicesTotal: number;
@@ -404,4 +437,29 @@ export interface InvoiceStats {
   totalPaid?: number;
   totalOverdue?: number;
 }
+
+export type GetSalesReportParams = {
+/**
+ * Preset period or 'custom'
+ */
+period?: GetSalesReportPeriod;
+/**
+ * Start date (ISO) for custom range
+ */
+from?: string;
+/**
+ * End date (ISO) for custom range
+ */
+to?: string;
+};
+
+export type GetSalesReportPeriod = typeof GetSalesReportPeriod[keyof typeof GetSalesReportPeriod];
+
+
+export const GetSalesReportPeriod = {
+  today: 'today',
+  week: 'week',
+  month: 'month',
+  custom: 'custom',
+} as const;
 

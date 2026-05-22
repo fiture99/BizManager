@@ -8,7 +8,8 @@ import {
   ShoppingCart, 
   Users, 
   Truck,
-  Store
+  Store,
+  BarChart2
 } from "lucide-react";
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart },
   { name: "Customers", href: "/customers", icon: Users },
   { name: "Suppliers", href: "/suppliers", icon: Truck },
+  { name: "Reports", href: "/reports", icon: BarChart2 },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

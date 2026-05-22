@@ -1004,6 +1004,41 @@ export const GetSaleResponse = zod.object({
 
 
 /**
+ * @summary Get sales report for a period
+ */
+export const GetSalesReportQueryParams = zod.object({
+  "period": zod.enum(['today', 'week', 'month', 'custom']).optional().describe('Preset period or \'custom\''),
+  "from": zod.coerce.string().optional().describe('Start date (ISO) for custom range'),
+  "to": zod.coerce.string().optional().describe('End date (ISO) for custom range')
+})
+
+export const GetSalesReportResponse = zod.object({
+  "summary": zod.object({
+  "totalRevenue": zod.number(),
+  "totalTransactions": zod.number(),
+  "avgOrderValue": zod.number(),
+  "totalTax": zod.number()
+}),
+  "dailyRevenue": zod.array(zod.object({
+  "date": zod.string(),
+  "revenue": zod.number(),
+  "transactions": zod.number()
+})),
+  "topItems": zod.array(zod.object({
+  "itemId": zod.number(),
+  "name": zod.string(),
+  "quantitySold": zod.number(),
+  "revenue": zod.number()
+})),
+  "paymentBreakdown": zod.array(zod.object({
+  "method": zod.string(),
+  "count": zod.number(),
+  "total": zod.number()
+}))
+})
+
+
+/**
  * @summary Key business metrics
  */
 export const GetDashboardSummaryResponse = zod.object({
