@@ -9,8 +9,12 @@ import {
   Users, 
   Truck,
   Store,
-  BarChart2
+  BarChart2,
+  AlertTriangle,
+  X
 } from "lucide-react";
+import { useListLowStock, useListItems } from "@workspace/api-client-react";
+import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -23,6 +27,64 @@ const navigation = [
   { name: "Suppliers", href: "/suppliers", icon: Truck },
   { name: "Reports", href: "/reports", icon: BarChart2 },
 ];
+
+function GlobalAlertsBar() {
+  const [dismissed, setDismissed] = useState(false);
+  const { data: lowStockItems } = useListLowStock();
+  const { data: allItems } = useListItems();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const in7Days = new Date(today);
+  in7Days.setDate(today.getDate() + 7);
+
+  const expiringItems = (allItems ?? []).filter(item => {
+    if (!item.expiryDate) return false;
+    const exp = new Date(item.expiryDate);
+    return exp >= today && exp <= in7Days;
+  });
+
+  const expiredItems = (allItems ?? []).filter(item => {
+    if (!item.expiryDate) return false;
+    return new Date(item.expiryDate) < today;
+  });
+
+  const lowCount = (lowStockItems ?? []).length;
+  const expiringCount = expiringItems.length;
+  const expiredCount = expiredItems.length;
+
+  if (dismissed || (lowCount === 0 && expiringCount === 0 && expiredCount === 0)) return null;
+
+  const alerts: { text: string; color: "red" | "amber" }[] = [];
+  if (lowCount > 0) alerts.push({ text: `${lowCount} item${lowCount > 1 ? "s" : ""} low on stock`, color: "red" });
+  if (expiredCount > 0) alerts.push({ text: `${expiredCount} item${expiredCount > 1 ? "s" : ""} expired`, color: "red" });
+  if (expiringCount > 0) alerts.push({ text: `${expiringCount} item${expiringCount > 1 ? "s" : ""} expiring within 7 days`, color: "amber" });
+
+  const hasRed = alerts.some(a => a.color === "red");
+
+  return (
+    <div className={`flex items-center gap-3 px-4 py-2 text-sm font-medium border-b ${
+      hasRed
+        ? "bg-red-50 border-red-200 text-red-800"
+        : "bg-amber-50 border-amber-200 text-amber-800"
+    }`}>
+      <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+      <div className="flex-1 flex flex-wrap gap-x-4 gap-y-0.5">
+        {alerts.map((a, i) => (
+          <span key={i} className={a.color === "red" ? "text-red-700" : "text-amber-700"}>
+            {a.text}
+          </span>
+        ))}
+        <span className="text-muted-foreground font-normal">
+          — go to <Link href="/inventory" className="underline underline-offset-2">Inventory</Link> or <Link href="/items" className="underline underline-offset-2">Items</Link> to review
+        </span>
+      </div>
+      <button onClick={() => setDismissed(true)} className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity">
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -66,6 +128,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <div className="flex flex-col flex-1 w-0 md:pl-64">
+        <GlobalAlertsBar />
         <main className="flex-1 relative overflow-y-auto focus:outline-none">
           {children}
         </main>

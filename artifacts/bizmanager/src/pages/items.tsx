@@ -23,7 +23,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, MoreHorizontal, Pencil, Trash2, Package, Barcode } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Pencil, Trash2, Package, Barcode, AlertTriangle } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
 
 const itemSchema = z.object({
@@ -59,6 +59,19 @@ export default function Items() {
   });
 
   const categories = Array.from(new Set(items?.map((i) => i.category) ?? [])).sort();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const in7Days = new Date(today);
+  in7Days.setDate(today.getDate() + 7);
+
+  function getExpiryStatus(expiryDate?: string | null): "expired" | "expiring" | "ok" | null {
+    if (!expiryDate) return null;
+    const exp = new Date(expiryDate);
+    if (exp < today) return "expired";
+    if (exp <= in7Days) return "expiring";
+    return "ok";
+  }
 
   const filtered = (items ?? []).filter((i) => {
     const q = search.toLowerCase();
@@ -210,10 +223,23 @@ export default function Items() {
                     filtered.map((item) => {
                       const margin = item.unitPrice > 0 ? ((item.unitPrice - item.costPrice) / item.unitPrice) * 100 : 0;
                       const isHighlighted = item.id === highlightedId;
+                      const expiryStatus = getExpiryStatus(item.expiryDate);
+                      const rowClass = isHighlighted
+                        ? "bg-primary/10 ring-2 ring-primary transition-all"
+                        : expiryStatus === "expired"
+                        ? "bg-red-50"
+                        : expiryStatus === "expiring"
+                        ? "bg-amber-50"
+                        : "";
                       return (
-                        <TableRow key={item.id} className={isHighlighted ? "bg-primary/10 ring-2 ring-primary transition-all" : ""}>
+                        <TableRow key={item.id} className={rowClass}>
                           <TableCell>
-                            <div className="font-medium">{item.name}</div>
+                            <div className="font-medium flex items-center gap-2">
+                              {item.name}
+                              {(expiryStatus === "expired" || expiryStatus === "expiring") && (
+                                <AlertTriangle className={`h-3.5 w-3.5 flex-shrink-0 ${expiryStatus === "expired" ? "text-red-500" : "text-amber-500"}`} />
+                              )}
+                            </div>
                             {item.description && <div className="text-xs text-muted-foreground truncate max-w-[200px]">{item.description}</div>}
                           </TableCell>
                           <TableCell><Badge variant="secondary">{item.category}</Badge></TableCell>
@@ -226,8 +252,18 @@ export default function Items() {
                               </div>
                             ) : <span className="text-xs text-muted-foreground/50">—</span>}
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {item.expiryDate ?? <span className="text-muted-foreground/50">—</span>}
+                          <TableCell className="text-sm">
+                            {item.expiryDate ? (
+                              <span className={
+                                expiryStatus === "expired" ? "text-red-600 font-semibold" :
+                                expiryStatus === "expiring" ? "text-amber-600 font-semibold" :
+                                "text-muted-foreground"
+                              }>
+                                {item.expiryDate}
+                                {expiryStatus === "expired" && <span className="ml-1 text-xs">(Expired)</span>}
+                                {expiryStatus === "expiring" && <span className="ml-1 text-xs">(Soon)</span>}
+                              </span>
+                            ) : <span className="text-muted-foreground/50">—</span>}
                           </TableCell>
                           <TableCell className="text-right font-medium">{formatCurrency(item.unitPrice)}</TableCell>
                           <TableCell className="text-right text-muted-foreground">{formatCurrency(item.costPrice)}</TableCell>

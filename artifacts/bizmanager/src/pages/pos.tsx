@@ -319,7 +319,7 @@ export default function POS() {
           </div>
 
           {paymentMethod === "Cash" && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground flex-1">Amount tendered</span>
                 <Input
@@ -328,14 +328,22 @@ export default function POS() {
                   value={amountTendered}
                   onChange={e => setAmountTendered(e.target.value)}
                   placeholder="0.00"
-                  className="h-7 w-24 text-right"
+                  className="h-8 w-28 text-right font-mono text-base"
                 />
               </div>
-              {change !== null && change >= 0 && (
-                <div className="flex justify-between text-sm font-semibold text-green-600">
-                  <span>Change</span>
-                  <span>{formatCurrency(change)}</span>
-                </div>
+              {amountTendered !== "" && cart.length > 0 && (
+                change !== null && change >= 0 ? (
+                  <div className="rounded-lg bg-green-500/10 border border-green-500/30 p-3 text-center">
+                    <p className="text-xs text-green-700 font-medium uppercase tracking-wide mb-0.5">Change Due</p>
+                    <p className="text-2xl font-bold text-green-600">{formatCurrency(change)}</p>
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-2 text-center">
+                    <p className="text-xs text-red-600 font-medium">
+                      Short by {formatCurrency(total - Number(amountTendered))}
+                    </p>
+                  </div>
+                )
               )}
             </div>
           )}
