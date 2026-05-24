@@ -1,0 +1,34 @@
+PS C:\Users\Gainde\Documents\GitHub\BizManager> pnpm add -D tsx --filter @workspace/db
+artifacts/api-server                     |  WARN  deprecated @types/bcryptjs@3.0.0
+artifacts/mockup-sandbox                 |  WARN  deprecated recharts@2.15.4
+Progress: resolved 511, reused 0, downloaded 0, added 0, done
+Done in 3.6s using pnpm v10.33.0
+PS C:\Users\Gainde\Documents\GitHub\BizManager> cd lib\db                             
+>> pnpm run push
+>> cd ..\..
+
+> @workspace/db@0.0.0 push C:\Users\Gainde\Documents\GitHub\BizManager\lib\db
+> node --import tsx/esm ./node_modules/.bin/drizzle-kit push --config ./drizzle.config.ts
+
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error: Transform failed with 1 error:
+C:\Users\Gainde\Documents\GitHub\BizManager\lib\db\node_modules\.bin\drizzle-kit.js:2:18: ERROR: Expected ")" but found "\"$(echo \""
+    at failureErrorWithLog (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\esbuild@0.27.3\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\esbuild@0.27.3\node_modules\esbuild\lib\main.js:736:50
+    at responseCallbacks.<computed> (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\esbuild@0.27.3\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\esbuild@0.27.3\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\esbuild@0.27.3\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+  name: 'TransformError'
+}
+
+Node.js v22.18.0
+ ELIFECYCLE  Command failed with exit code 1.
+PS C:\Users\Gainde\Documents\GitHub\BizManager> 
