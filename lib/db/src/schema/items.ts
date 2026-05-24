@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, numeric, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -6,16 +6,15 @@ export const itemsTable = pgTable("items", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  category: text("category").notNull(),
-  unitPrice: numeric("unit_price", { precision: 12, scale: 2 }).notNull(),
-  costPrice: numeric("cost_price", { precision: 12, scale: 2 }).notNull(),
-  unitOfMeasure: text("unit_of_measure").notNull(),
-  barcode: text("barcode").unique(),
-  expiryDate: date("expiry_date"),
+  sku: text("sku").unique(),
+  category: text("category"),
+  unitPrice: numeric("unit_price", { precision: 12, scale: 2 }).notNull().default("0"),
+  costPrice: numeric("cost_price", { precision: 12, scale: 2 }).notNull().default("0"),
+  unit: text("unit").notNull().default("unit"),
+  expiryDate: timestamp("expiry_date", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const insertItemSchema = createInsertSchema(itemsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertItemSchema = createInsertSchema(itemsTable).omit({ id: true, createdAt: true });
 export type InsertItem = z.infer<typeof insertItemSchema>;
 export type Item = typeof itemsTable.$inferSelect;

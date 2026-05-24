@@ -8,12 +8,15 @@ export const purchaseOrdersTable = pgTable("purchase_orders", {
   id: serial("id").primaryKey(),
   poNumber: text("po_number").notNull().unique(),
   supplierId: integer("supplier_id").notNull().references(() => suppliersTable.id),
-  status: text("status").notNull().default("Draft"),
+  status: text("status").notNull().default("draft"),
   orderDate: timestamp("order_date", { withTimezone: true }),
   expectedDate: timestamp("expected_date", { withTimezone: true }),
   subtotal: numeric("subtotal", { precision: 12, scale: 2 }).notNull().default("0"),
   total: numeric("total", { precision: 12, scale: 2 }).notNull().default("0"),
   notes: text("notes"),
+  createdBy: integer("created_by"),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

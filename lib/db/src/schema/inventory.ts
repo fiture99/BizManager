@@ -7,7 +7,7 @@ export const inventoryLevelsTable = pgTable("inventory_levels", {
   itemId: integer("item_id").primaryKey().references(() => itemsTable.id, { onDelete: "cascade" }),
   quantityOnHand: numeric("quantity_on_hand", { precision: 12, scale: 2 }).notNull().default("0"),
   reorderPoint: numeric("reorder_point", { precision: 12, scale: 2 }).notNull().default("0"),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const stockAdjustmentsTable = pgTable("stock_adjustments", {
@@ -16,6 +16,10 @@ export const stockAdjustmentsTable = pgTable("stock_adjustments", {
   quantity: numeric("quantity", { precision: 12, scale: 2 }).notNull(),
   reason: text("reason").notNull(),
   notes: text("notes"),
+  status: text("status").notNull().default("draft"),
+  createdBy: integer("created_by"),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

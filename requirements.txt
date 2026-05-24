@@ -1,0 +1,4 @@
+pnpm install 
+$env:FRONTEND_PORT="5173"; $env:BASE_PATH="/"; pnpm --filter @workspace/bizmanager run dev
+
+pnpm --filter @workspace/db run push

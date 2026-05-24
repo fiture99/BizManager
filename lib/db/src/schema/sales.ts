@@ -14,6 +14,10 @@ export const salesTable = pgTable("sales", {
   amountTendered: numeric("amount_tendered", { precision: 12, scale: 2 }),
   change: numeric("change", { precision: 12, scale: 2 }),
   notes: text("notes"),
+  status: text("status").notNull().default("draft"),
+  createdBy: integer("created_by"),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

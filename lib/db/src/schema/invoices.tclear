@@ -8,7 +8,7 @@ export const invoicesTable = pgTable("invoices", {
   id: serial("id").primaryKey(),
   invoiceNumber: text("invoice_number").notNull().unique(),
   customerId: integer("customer_id").notNull().references(() => customersTable.id),
-  status: text("status").notNull().default("draft"),
+  status: text("status").notNull().default("Draft"),
   issueDate: timestamp("issue_date", { withTimezone: true }),
   dueDate: timestamp("due_date", { withTimezone: true }),
   subtotal: numeric("subtotal", { precision: 12, scale: 2 }).notNull().default("0"),
@@ -16,6 +16,9 @@ export const invoicesTable = pgTable("invoices", {
   taxAmount: numeric("tax_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   total: numeric("total", { precision: 12, scale: 2 }).notNull().default("0"),
   notes: text("notes"),
+  createdBy: integer("created_by"),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at", { withTimezone: true }),
   createdBy: integer("created_by"),
   approvedBy: integer("approved_by"),
   approvedAt: timestamp("approved_at", { withTimezone: true }),
@@ -39,3 +42,5 @@ export type Invoice = typeof invoicesTable.$inferSelect;
 export const insertInvoiceLineItemSchema = createInsertSchema(invoiceLineItemsTable).omit({ id: true });
 export type InsertInvoiceLineItem = z.infer<typeof insertInvoiceLineItemSchema>;
 export type InvoiceLineItem = typeof invoiceLineItemsTable.$inferSelect;
+
+
