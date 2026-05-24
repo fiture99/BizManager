@@ -1,10 +1,19 @@
 import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const bcrypt = require("bcryptjs");
-const { Pool } = require("pg");
+
+const bcrypt = require("./node_modules/bcryptjs/index.js");
+
+// pg lives in lib/db's node_modules
+const { Pool } = require(
+  path.join(__dirname, "../../lib/db/node_modules/pg/lib/index.js")
+);
 
 if (!process.env.DATABASE_URL) {
-  console.error("ERROR: DATABASE_URL is not set. Make sure your .env file is configured.");
+  console.error("ERROR: DATABASE_URL is not set. Check your .env file.");
   process.exit(1);
 }
 
@@ -21,9 +30,9 @@ await pool.query(`
 `);
 
 const users = [
-  { username: "admin",     password: "admin123",     role: "admin" },
-  { username: "approver1", password: "approver123",  role: "approver" },
-  { username: "inputter1", password: "inputter123",  role: "inputter" },
+  { username: "admin",     password: "admin123",    role: "admin" },
+  { username: "approver1", password: "approver123", role: "approver" },
+  { username: "inputter1", password: "inputter123", role: "inputter" },
 ];
 
 for (const u of users) {
@@ -39,4 +48,4 @@ const { rows } = await pool.query("SELECT id, username, role FROM users ORDER BY
 console.log("\nAll users:");
 console.table(rows);
 await pool.end();
-console.log("\nDone! You can now log in with the credentials above.");
+console.log("\nDone! You can now log in at http://localhost:3000");
