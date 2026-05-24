@@ -158,9 +158,9 @@ export default function POS() {
   const todayTotal = todaySales.reduce((s, sale) => s + sale.total, 0);
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col md:flex-row h-full">
       {/* Left: Item grid + scanner */}
-      <div className="flex flex-col flex-1 min-w-0 p-4 gap-3 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 p-3 md:p-4 gap-3 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between flex-shrink-0">
           <div>
@@ -219,7 +219,7 @@ export default function POS() {
       </div>
 
       {/* Right: Cart + payment */}
-      <div className="w-80 flex flex-col border-l bg-muted/20">
+      <div className="w-full md:w-80 flex flex-col border-t md:border-t-0 md:border-l bg-muted/20 max-h-[50vh] md:max-h-none">
         <div className="flex items-center gap-2 px-4 py-3 border-b bg-background">
           <ShoppingCart className="h-5 w-5" />
           <span className="font-semibold">Cart</span>

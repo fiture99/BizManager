@@ -154,7 +154,7 @@ export default function Items() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Items</h1>
@@ -321,7 +321,7 @@ export default function Items() {
                   <FormMessage />
                 </FormItem>
               )} />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="category" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
@@ -337,7 +337,7 @@ export default function Items() {
                   </FormItem>
                 )} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="unitPrice" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit Price (sell)</FormLabel>
@@ -353,7 +353,7 @@ export default function Items() {
                   </FormItem>
                 )} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="barcode" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Barcode (optional)</FormLabel>

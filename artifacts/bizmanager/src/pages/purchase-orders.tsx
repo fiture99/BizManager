@@ -218,7 +218,7 @@ export default function PurchaseOrders() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Purchase Orders</h1>
@@ -328,7 +328,7 @@ export default function PurchaseOrders() {
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-2">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="supplierId" render={({ field }) => (
                   <FormItem className="col-span-2 sm:col-span-1">
                     <FormLabel>Supplier</FormLabel>

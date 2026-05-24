@@ -75,7 +75,7 @@ export default function Reports() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -297,7 +297,7 @@ export default function Reports() {
           ) : topItems.length === 0 ? (
             <div className="h-32 flex items-center justify-center text-muted-foreground text-sm">No items sold in this period</div>
           ) : (
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto"><table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left px-6 py-3 text-muted-foreground font-medium">#</th>
@@ -333,7 +333,7 @@ export default function Reports() {
                   );
                 })}
               </tbody>
-            </table>
+            </table></div>
           )}
         </CardContent>
       </Card>
