@@ -1,0 +1,49 @@
+PS C:\Users\Gainde\Documents\GitHub\BizManager> # Step 5 — Push the database schema 
+>> cd lib/db
+>> pnpm run push
+>> cd ../..
+
+> @workspace/db@0.0.0 push C:\Users\Gainde\Documents\GitHub\BizManager\lib\db
+> drizzle-kit push --config ./drizzle.config.cjs
+
+Reading config file 'C:\Users\Gainde\Documents\GitHub\BizManager\lib\db\drizzle.config.cjs'
+◇ injected env (5) from ..\..\.env // tip: ⌘ override existing { override: true }
+Using 'pg' driver for database querying
+SyntaxError: Unexpected token 'export'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:422:18)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1519:24)
+    at Module._compile (node:internal/modules/cjs/loader:1670:5)
+    at node:internal/modules/cjs/loader:1820:10
+    at Object.transformer (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\drizzle-kit@0.31.10\node_modules\drizzle-kit\bin.cjs:14999:31)
+    at Module.load (node:internal/modules/cjs/loader:1423:32)
+    at Function._load (node:internal/modules/cjs/loader:1246:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+PS C:\Users\Gainde\Documents\GitHub\BizManager> 
+ *  History restored 
+
+PS C:\Users\Gainde\Documents\GitHub\BizManager> # Step 5 — Push the database schema
+>> cd lib/db
+>> pnpm run push
+>> cd ../..
+
+> @workspace/db@0.0.0 push C:\Users\Gainde\Documents\GitHub\BizManager\lib\db
+> drizzle-kit push --config ./drizzle.config.cjs
+
+Reading config file 'C:\Users\Gainde\Documents\GitHub\BizManager\lib\db\drizzle.config.cjs'
+◇ injected env (5) from ..\..\.env // tip: ⌘ enable debugging { debug: true }
+Using 'pg' driver for database querying
+SyntaxError: Unexpected token 'export'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:422:18)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1519:24)
+    at Module._compile (node:internal/modules/cjs/loader:1670:5)
+    at node:internal/modules/cjs/loader:1820:10
+    at Object.transformer (C:\Users\Gainde\Documents\GitHub\BizManager\node_modules\.pnpm\drizzle-kit@0.31.10\node_modules\drizzle-kit\bin.cjs:14999:31)
+    at Module.load (node:internal/modules/cjs/loader:1423:32)
+    at Function._load (node:internal/modules/cjs/loader:1246:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+PS C:\Users\Gainde\Documents\GitHub\BizManager> ^C
+PS C:\Users\Gainde\Documents\GitHub\BizManager> 
